@@ -9,72 +9,105 @@ const Evidence = [
   {key:'dots', name:'DOTS Projector', icon:'🔹'},
 ];
 
-const Tests = {
-  favorOnPass: 'favorOnPass',
-  eliminateOnPass: 'eliminateOnPass',
-  eliminateOnFail: 'eliminateOnFail',
-  none: 'none'
+const NORMAL_LOS_NOTE = "Meeste geesten: basis 1.7 m/s, versnellen tot 1.65× bij zicht (≈2.8 m/s) en zakken langzaam terug.";
+const Blink = {
+  standard: { label: "Standaard", details: "Zichtbaar 0.08–0.30s / onzichtbaar 0.10–0.92s per flikker-set." },
+  moreVisible: { label: "Meer zichtbaar", details: "Oni & Deogen: gemiddeld langer zichtbaar en korter onzichtbaar." },
+  phantomLike: { label: "Phantom (meer onzichtbaar)", details: "Zichtbaar 0.08–0.30s / onzichtbaar 0.70–1.92s." }
 };
 
+// 24 ghosts
 const Ghosts = [
   { key:'spirit', name:'Spirit', evidences:['emf5','spiritBox','ghostWriting'],
-    abilities:'Geen unieke jacht modifiers; smudge geeft langere cooldown.',
-    notes:'Standaardgedrag; smudge geeft langere cooldown.',
-    tests:[
-      {id:'spirit-smudge-cooldown', title:'Smudge-cooldown meten', howTo:'Smudge tijdens jacht en meet tijd tot volgende mogelijke jacht; Spirit is langer dan gemiddeld.', effect:Tests.favorOnPass, notes:'Gebruik timer.'}
-    ]
-  },
+    abilities:'Geen speciale hunt modifiers. Smudge werkt langer tegen deze geest.',
+    speed:{ summary: NORMAL_LOS_NOTE, min:1.7, max:2.8, special:'' }, blink:'standard' },
   { key:'wraith', name:'Wraith', evidences:['emf5','spiritBox','dots'],
     abilities:'Mijdt vaak zout; kan bij spelers verschijnen.',
-    notes:'Zelden voetstappen in zout (kan wel).',
-    tests:[
-      {id:'wraith-salt', title:'Zout-voetstappen check', howTo:'Leg zout op routes en check UV/geluid na erdoor lopen.', effect:Tests.favorOnPass, notes:'Indicatief, niet absoluut.'}
-    ]
-  },
+    speed:{ summary: NORMAL_LOS_NOTE, min:1.7, max:2.8, special:'' }, blink:'standard' },
+  { key:'phantom', name:'Phantom', evidences:['spiritBox','fingerprints','dots'],
+    abilities:'Kijken naar de geest drain’t sanity. Foto laat hem verdwijnen.',
+    speed:{ summary: NORMAL_LOS_NOTE, min:1.7, max:2.8, special:'' }, blink:'phantomLike' },
+  { key:'poltergeist', name:'Poltergeist', evidences:['spiritBox','fingerprints','ghostWriting'],
+    abilities:'Kan meerdere objecten tegelijk gooien; sterker met veel throwables.',
+    speed:{ summary: NORMAL_LOS_NOTE, min:1.7, max:2.8, special:'' }, blink:'standard' },
   { key:'banshee', name:'Banshee', evidences:['fingerprints','ghostOrbs','dots'],
-    abilities:'Target één speler; unieke parabolic scream.',
-    notes:'De scream is zeldzaam.',
-    tests:[
-      {id:'banshee-parabolic', title:'Parabolic “scream”', howTo:'Richt parabolic op geestenlocatie en luister naar scream.', effect:Tests.favorOnPass, notes:'Zeer indicatief.'}
-    ]
-  },
+    abilities:'Target één speler; unieke parabolic “scream”.',
+    speed:{ summary: NORMAL_LOS_NOTE, min:1.7, max:2.8, special:'' }, blink:'standard' },
+  { key:'jinn', name:'Jinn', evidences:['emf5','fingerprints','freezing'],
+    abilities:'Sneller bij zicht op afstand met stroom aan.',
+    speed:{ summary: "2.5 m/s bij zicht (>3m) met stroom aan; anders normaal.", min:1.7, max:2.5, special:'2.5 m/s met stroom aan & LoS' }, blink:'standard' },
+  { key:'mare', name:'Mare', evidences:['spiritBox','ghostOrbs','ghostWriting'],
+    abilities:'Sterker in het donker; zet graag lichten uit.',
+    speed:{ summary: NORMAL_LOS_NOTE, min:1.7, max:2.8, special:'' }, blink:'standard' },
+  { key:'revenant', name:'Revenant', evidences:['ghostOrbs','ghostWriting','freezing'],
+    abilities:'Zeer snel zodra hij je ziet; zeer traag zonder target.',
+    speed:{ summary: "1.0 m/s zonder target; 3.0 m/s bij zicht; remt terug.", min:1.0, max:3.0, special:'Sneller bij zicht' }, blink:'standard' },
+  { key:'shade', name:'Shade', evidences:['emf5','ghostWriting','freezing'],
+    abilities:'Schuw; weinig events; jaagt niet dichtbij spelers.',
+    speed:{ summary: NORMAL_LOS_NOTE, min:1.7, max:2.8, special:'' }, blink:'standard' },
+  { key:'demon', name:'Demon', evidences:['fingerprints','ghostWriting','freezing'],
+    abilities:'Kan zeer vroeg jagen; kortere smudge-cooldown.',
+    speed:{ summary: NORMAL_LOS_NOTE, min:1.7, max:2.8, special:'' }, blink:'standard' },
+  { key:'yurei', name:'Yurei', evidences:['ghostOrbs','freezing','dots'],
+    abilities:'Sterke sanity drain via deur-event.',
+    speed:{ summary: NORMAL_LOS_NOTE, min:1.7, max:2.8, special:'' }, blink:'standard' },
+  { key:'oni', name:'Oni', evidences:['emf5','freezing','dots'],
+    abilities:'Meer zichtbaar tijdens hunts; actiever bij spelers; geen airball event.',
+    speed:{ summary: NORMAL_LOS_NOTE, min:1.7, max:2.8, special:'' }, blink:'moreVisible' },
+  { key:'yokai', name:'Yokai', evidences:['spiritBox','ghostOrbs','dots'],
+    abilities:'Hoort stemmen slecht tijdens jacht (~2.5m).',
+    speed:{ summary: NORMAL_LOS_NOTE, min:1.7, max:2.8, special:'Klein stem-bereik' }, blink:'standard' },
+  { key:'hantu', name:'Hantu', evidences:['fingerprints','ghostOrbs','freezing'],
+    abilities:'Snelheid stijgt in kou; adembevriezing bij stroom uit.',
+    speed:{ summary: "Temp-afhankelijk: ~1.4–2.7 m/s (kouder = sneller).", min:1.4, max:2.7, special:'Temp-gebonden' }, blink:'standard' },
   { key:'goryo', name:'Goryo', evidences:['emf5','fingerprints','dots'],
-    abilities:'DOTS meestal alleen op camera zonder spelers in de kamer.',
-    notes:'DOTS in persoon is zeldzaam.',
-    tests:[
-      {id:'goryo-dots-camera', title:'DOTS alleen op camera', howTo:'Plaats DOTS + camera; verlaat de kamer; DOTS zichtbaar via camera?', effect:Tests.favorOnPass, notes:'Als DOTS in persoon → geen Goryo.'},
-      {id:'goryo-dots-inperson', title:'DOTS in persoon', howTo:'Blijf in de kamer en kijk of DOTS in persoon zichtbaar zijn.', effect:Tests.eliminateOnPass, notes:'Positief ⇒ Goryo uitsluiten.'}
-    ]
-  },
-  { key:'deogen', name:'Deogen', evidences:['spiritBox','ghostWriting','dots'],
-    abilities:'Weet altijd waar je bent; langzaam dichtbij, snel ver weg.',
-    notes:'Loop dichtbij om snelheid te testen.',
-    tests:[
-      {id:'deogen-speed', title:'Snelheid dichtbij vs ver', howTo:'Forceer jacht; observeer extreem traag dichtbij.', effect:Tests.favorOnPass, notes:'Veilig testen met cover.'}
-    ]
-  },
+    abilities:'DOTS meestal alleen via camera en zonder spelers in kamer.',
+    speed:{ summary: NORMAL_LOS_NOTE, min:1.7, max:2.8, special:'' }, blink:'standard' },
+  { key:'myling', name:'Myling', evidences:['emf5','fingerprints','ghostWriting'],
+    abilities:'Voetstappen zijn stiller/hoorbaar op kortere afstand; meer parabolic geluiden.',
+    speed:{ summary: NORMAL_LOS_NOTE, min:1.7, max:2.8, special:'Voetstappen hoor je pas dichterbij' }, blink:'standard' },
+  { key:'onryo', name:'Onryo', evidences:['spiritBox','ghostOrbs','freezing'],
+    abilities:'Vlammen voorkomen jacht; 3 kaarsen doven kan jacht triggeren.',
+    speed:{ summary: NORMAL_LOS_NOTE, min:1.7, max:2.8, special:'' }, blink:'standard' },
+  { key:'twins', name:'The Twins', evidences:['emf5','spiritBox','freezing'],
+    abilities:'Dubbele interacties; wisselende loopsnelheid.',
+    speed:{ summary: "Hoofd 1.5 m/s; decoy 1.9 m/s; verder normale regels.", min:1.5, max:1.9, special:'Twee snelheden' }, blink:'standard' },
   { key:'raiju', name:'Raiju', evidences:['emf5','ghostOrbs','dots'],
-    abilities:'Sneller bij elektronica.',
-    notes:'Zet devices uit voor controle.',
-    tests:[
-      {id:'raiju-electronics', title:'Elektronica versnelling', howTo:'Laat meerdere apparaten aan tijdens jacht en kijk of snelheid toeneemt.', effect:Tests.favorOnPass}
-    ]
-  },
+    abilities:'Sneller dichtbij actieve elektronica; groter storingsbereik.',
+    speed:{ summary: "2.5 m/s in radius van actieve elektronica; anders normaal.", min:1.7, max:2.5, special:'2.5 m/s bij elektronica' }, blink:'standard' },
   { key:'obake', name:'Obake', evidences:['emf5','fingerprints','ghostOrbs'],
-    abilities:'Ongewone vingerafdrukken die sneller vervagen.',
-    notes:'Let op 6-vinger prints.',
-    tests:[
-      {id:'obake-fingerprints', title:'Afwijkende vingerafdrukken', howTo:'Check UV op deuren/ramen; 6 vingers/snelle fade.', effect:Tests.favorOnPass}
-    ]
-  },
+    abilities:'Ongewone prints; verdwijnen sneller; kan kort shapeshiften.',
+    speed:{ summary: NORMAL_LOS_NOTE, min:1.7, max:2.8, special:'Kan shapeshiften' }, blink:'standard' },
   { key:'mimic', name:'The Mimic', evidences:['spiritBox','fingerprints','freezing'],
-    abilities:'Imiteert anderen; vaak extra “vals” orbs.',
-    notes:'Orbs als vierde bewijs.',
-    tests:[
-      {id:'mimic-orbs', title:'Extra orbs', howTo:'Zie je orbs terwijl bewijs geen orbs vereist? Verdacht voor Mimic.', effect:Tests.favorOnPass}
-    ]
-  },
+    abilities:'Imiteert andere geesten; toont vaak extra “vals” orbs.',
+    speed:{ summary: "Volgt snelheid/gedrag van het geïmiteerde type.", min:1.4, max:3.0, special:'Variabel (imitatie)' }, blink:'standard' },
+  { key:'moroi', name:'Moroi', evidences:['spiritBox','ghostWriting','freezing'],
+    abilities:'Sneller bij lage sanity; smudge verblindt 50% langer.',
+    speed:{ summary: "Basis 1.5–2.25 m/s (lage sanity sneller); met LoS max ≈3.71 m/s.", min:1.5, max:3.71, special:'Sanity-gebonden' }, blink:'standard' },
+  { key:'deogen', name:'Deogen', evidences:['spiritBox','ghostWriting','dots'],
+    abilities:'Weet altijd waar je bent; razendsnel ver weg, extreem traag dichtbij.',
+    speed:{ summary: "Afstand-afhankelijk: ~0.4 m/s (dichtbij) tot 3.0 m/s (ver).", min:0.4, max:3.0, special:'Afstand-gebonden' }, blink:'moreVisible' },
+  { key:'thaye', name:'Thaye', evidences:['ghostOrbs','ghostWriting','dots'],
+    abilities:'Heel sterk/snel in het begin; wordt trager en zwakker na verloop.',
+    speed:{ summary: "Start 2.75 m/s; daalt in stappen tot ~1.0 m/s.", min:1.0, max:2.75, special:'Wordt trager met tijd' }, blink:'standard' },
 ];
+
+// Minimal tests (can be expanded later)
+const TestEffects = { favorOnPass:'favorOnPass', eliminateOnPass:'eliminateOnPass', eliminateOnFail:'eliminateOnFail', none:'none' };
+const testsByKey = {
+  'banshee': [{id:'banshee-parabolic', title:'Parabolic “scream”', howTo:'Luister met parabolic in geestenruimte naar de unieke Banshee scream.', effect:TestEffects.favorOnPass, notes:'Zeldzaam maar sterk signaal.'}],
+  'goryo': [
+    {id:'goryo-dots-camera', title:'DOTS alleen op camera', howTo:'Plaats DOTS + camera; verlaat de kamer en kijk via camera.', effect:TestEffects.favorOnPass},
+    {id:'goryo-dots-inperson', title:'DOTS in persoon', howTo:'Zie je DOTS duidelijk in persoon? Goryo onwaarschijnlijk.', effect:TestEffects.eliminateOnPass}
+  ],
+  'obake': [{id:'obake-fingerprints', title:'Afwijkende vingerafdrukken', howTo:'Zoek 6-vinger prints / snelle fade met UV.', effect:TestEffects.favorOnPass}],
+  'deogen': [{id:'deogen-speed', title:'Snel dichtbij vs ver', howTo:'Forceer jacht en observeer: extreem traag dichtbij.', effect:TestEffects.favorOnPass}],
+  'raiju': [{id:'raiju-electronics', title:'Elektronica versnelling', howTo:'Laat meerdere devices aan en observeer snelheidsboost.', effect:TestEffects.favorOnPass}],
+  'spirit': [{id:'spirit-smudge', title:'Smudge-cooldown', howTo:'Smudge tijdens jacht; langere preventietijd wijst op Spirit.', effect:TestEffects.favorOnPass}],
+  'wraith': [{id:'wraith-salt', title:'Zout voetstappen', howTo:'Leg zout en check UV/geluid na erdoor lopen.', effect:TestEffects.favorOnPass}],
+  'mimic': [{id:'mimic-orbs', title:'Extra “vals” orbs', howTo:'Zie je orbs terwijl bewijs geen orbs vraagt? Verdacht.', effect:TestEffects.favorOnPass}]
+};
+Ghosts.forEach(g => g.tests = testsByKey[g.key] || []);
 
 // ---- State (LocalStorage) ----
 const LS = {
@@ -162,9 +195,7 @@ function renderList() {
     xBtn.classList.toggle('active', state.crossed.has(g.key));
     cBtn.onclick = (e)=>{ state.circled.has(g.key)?state.circled.delete(g.key):state.circled.add(g.key); saveState(); renderList(); e.stopPropagation();};
     xBtn.onclick = (e)=>{ state.crossed.has(g.key)?state.crossed.delete(g.key):state.crossed.add(g.key); saveState(); renderList(); e.stopPropagation();};
-    const open = ()=> openDialog(g);
-    const rowClick = ()=> open();
-    row.addEventListener('click', rowClick);
+    row.addEventListener('click', () => openDialog(g));
     actions.append(cBtn, xBtn);
     row.append(main, actions);
     list.appendChild(row);
@@ -178,6 +209,15 @@ function chip(name) {
   return el;
 }
 
+function setKV(container, data) {
+  container.innerHTML = '';
+  for (const [k,v] of Object.entries(data)) {
+    const kEl = document.createElement('div'); kEl.textContent = k; kEl.style.color = 'var(--muted)';
+    const vEl = document.createElement('div'); vEl.textContent = v;
+    container.appendChild(kEl); container.appendChild(vEl);
+  }
+}
+
 function openDialog(g) {
   const dlg = document.getElementById('ghostDialog');
   document.getElementById('dlgName').textContent = g.name;
@@ -186,12 +226,26 @@ function openDialog(g) {
   document.getElementById('dlgAbilities').textContent = g.abilities;
   const notesWrap = document.getElementById('dlgNotesWrap');
   if (g.notes) { notesWrap.classList.remove('hide'); document.getElementById('dlgNotes').textContent=g.notes; } else { notesWrap.classList.add('hide'); }
+
+  // Speed
+  const sp = document.getElementById('dlgSpeed');
+  const speedText = `${g.speed.summary}${g.speed.special ? ' ('+g.speed.special+')' : ''}`;
+  setKV(sp, { 'Samenvatting': speedText, 'Min-max (m/s)': `${g.speed.min} – ${g.speed.max}` });
+
+  // Blink
+  const bl = document.getElementById('dlgBlink');
+  const profile = Blink[g.blink] || Blink.standard;
+  setKV(bl, { 'Profiel': profile.label, 'Details': profile.details });
+
+  // Mark buttons
   const circleBtn = document.getElementById('dlgCircle');
   const crossBtn = document.getElementById('dlgCross');
   circleBtn.classList.toggle('active', state.circled.has(g.key));
   crossBtn.classList.toggle('active', state.crossed.has(g.key));
   circleBtn.onclick = () => { state.circled.has(g.key)?state.circled.delete(g.key):state.circled.add(g.key); saveState(); renderList(); openDialog(g); };
   crossBtn.onclick = () => { state.crossed.has(g.key)?state.crossed.delete(g.key):state.crossed.add(g.key); saveState(); renderList(); openDialog(g); };
+
+  // Tests
   const testsWrap = document.getElementById('dlgTests'); testsWrap.innerHTML='';
   (g.tests||[]).forEach(t => {
     const div = document.createElement('div'); div.className='test';
@@ -217,6 +271,7 @@ function openDialog(g) {
     div.append(controls);
     testsWrap.append(div);
   });
+
   document.getElementById('dlgClose').onclick = () => dlg.close();
   dlg.showModal();
 }

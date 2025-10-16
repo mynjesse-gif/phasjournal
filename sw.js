@@ -1,4 +1,4 @@
-const CACHE = 'phasjournal-cache-v1';
+const CACHE = 'phasjournal-cache-v3';
 const ASSETS = [
   './',
   './index.html',
