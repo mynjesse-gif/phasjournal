@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Phas Journal</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0f172a">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <header class="appbar">
+    <h1>Phas Journal</h1>
+    <button id="btnReset" title="Reset filters">Reset</button>
+  </header>
+
+  <main>
+    <section id="evidenceSection" class="card">
+      <h2>Bewijs</h2>
+      <p class="hint">Tik om te wisselen: <b>geen → geselecteerd → uitgesloten → geen</b></p>
+      <div id="evidenceChips" class="chips"></div>
+    </section>
+
+    <section id="controls" class="row">
+      <label class="switch">
+        <input type="checkbox" id="onlyPossible" checked>
+        <span>Toon alleen mogelijke geesten</span>
+      </label>
+      <input id="search" class="search" placeholder="Zoek geest…" />
+    </section>
+
+    <section id="ghostList" class="list"></section>
+  </main>
+
+  <template id="ghostRowTmpl">
+    <div class="row-item">
+      <div class="row-main">
+        <div class="row-title"></div>
+        <div class="row-sub"></div>
+      </div>
+      <div class="row-actions">
+        <button class="circle" title="Omcirkelen">○</button>
+        <button class="cross" title="Doorstrepen">✕</button>
+      </div>
+    </div>
+  </template>
+
+  <dialog id="ghostDialog">
+    <div class="dialog-header">
+      <h3 id="dlgName"></h3>
+      <div class="dlg-actions">
+        <button id="dlgCircle" title="Omcirkelen">○</button>
+        <button id="dlgCross" title="Doorstrepen">✕</button>
+        <button id="dlgClose" aria-label="Sluiten">Sluiten</button>
+      </div>
+    </div>
+    <div class="dialog-body">
+      <h4>Bewijs</h4>
+      <div id="dlgEvidence" class="chips small"></div>
+      <h4>Abilities</h4>
+      <p id="dlgAbilities"></p>
+      <div id="dlgNotesWrap" class="notes hide">
+        <h4>Tips</h4>
+        <p id="dlgNotes"></p>
+      </div>
+      <div id="dlgTestsWrap" class="tests">
+        <h4>Tests</h4>
+        <div id="dlgTests"></div>
+      </div>
+    </div>
+  </dialog>
+
+  <footer class="footer">
+    <button id="btnAbout">Info</button>
+    <span class="dot">•</span>
+    <span>Offline klaar. Voeg toe aan beginscherm voor app-gevoel.</span>
+  </footer>
+
+  <dialog id="aboutDialog">
+    <h3>Over deze app</h3>
+    <p>Onofficiële Phasmophobia journal (PWA). Bewijs selecteren/uitsluiten, geesten filteren, testen per geest en markeren als verdacht of uitsluiten.</p>
+    <p><small>Fan-made. Niet gelieerd aan Kinetic Games.</small></p>
+    <button id="aboutClose">Sluiten</button>
+  </dialog>
+</body>
+</html>
